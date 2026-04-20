@@ -37,4 +37,17 @@ internal static class XlsxErrorCodeExtensions
         FreeDataExportsv2.ErrorCode.InvalidValue     => "#VALUE!",
         _                                            => "#VALUE!",
     };
+
+    /// <summary>Returns an ODS formula string that evaluates to this error code.</summary>
+    public static string ToOdsFormula(this FreeDataExportsv2.ErrorCode code) => code switch
+    {
+        FreeDataExportsv2.ErrorCode.DivisionByZero   => "of:=1/0",
+        FreeDataExportsv2.ErrorCode.NotAvailable     => "of:=NA()",
+        FreeDataExportsv2.ErrorCode.InvalidName      => "of:=ERR:522()",
+        FreeDataExportsv2.ErrorCode.NullIntersection => "of:=ERR:521()",
+        FreeDataExportsv2.ErrorCode.InvalidNumber    => "of:=SQRT(-1)",
+        FreeDataExportsv2.ErrorCode.InvalidReference => "of:=ERR:524()",
+        FreeDataExportsv2.ErrorCode.InvalidValue     => "of:=ERR:519()",
+        _                                            => "of:=ERR:519()",
+    };
 }

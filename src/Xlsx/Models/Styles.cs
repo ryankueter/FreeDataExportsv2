@@ -129,13 +129,14 @@ internal sealed class XlsxStyles
     {
         int fontId    = GetOrAddFont(options);
         int fillId    = GetOrAddFill(options);
+        int borderId  = GetOrAddBorderFromOptions(options);
         string fmt    = XlsxDataTypeFormats.GetFormatCode(options.DataType, formatOverrides);
         int numFmtId  = GetOrAddNumFmt(fmt);
         var alignment = BuildAlignment(options);
 
         int idx = CellXfs.FindIndex(x =>
             x.NumFmtId == numFmtId && x.FontId == fontId &&
-            x.FillId   == fillId   && x.BorderId == 0 &&
+            x.FillId   == fillId   && x.BorderId == borderId &&
             AlignmentsEqual(x.XlsxAlignment, alignment));
         if (idx >= 0) return idx;
 
@@ -144,13 +145,14 @@ internal sealed class XlsxStyles
             NumFmtId          = numFmtId,
             FontId            = fontId,
             FillId            = fillId,
-            BorderId          = 0,
+            BorderId          = borderId,
             XfId              = 0,
-            ApplyNumberFormat = numFmtId != 0,
-            ApplyFont         = fontId   != 0,
-            ApplyFill         = fillId   > 1,
+            ApplyNumberFormat = numFmtId  != 0,
+            ApplyFont         = fontId    != 0,
+            ApplyFill         = fillId    > 1,
+            ApplyBorder       = borderId  != 0,
             ApplyAlignment    = alignment is not null,
-            XlsxAlignment         = alignment,
+            XlsxAlignment     = alignment,
         });
         return CellXfs.Count - 1;
     }
@@ -229,6 +231,35 @@ internal sealed class XlsxStyles
 
         Fills.Add(new XlsxFill("solid", fgColor: target, bgColor: "FF000000"));
         return Fills.Count - 1;
+    }
+
+    private int GetOrAddBorderFromOptions(CellOptions o)
+    {
+        bool hasBorder =
+            o.BorderLeftStyle   != null || o.BorderRightStyle  != null ||
+            o.BorderTopStyle    != null || o.BorderBottomStyle != null;
+        if (!hasBorder) return 0;
+
+        static XlsxBorderSide Side(string? style, string? color) => new()
+        {
+            Style = style,
+            Color = style != null ? (color ?? "FF000000") : null,
+        };
+
+        var left   = Side(o.BorderLeftStyle,   o.BorderLeftColor);
+        var right  = Side(o.BorderRightStyle,  o.BorderRightColor);
+        var top    = Side(o.BorderTopStyle,    o.BorderTopColor);
+        var bottom = Side(o.BorderBottomStyle, o.BorderBottomColor);
+
+        int idx = Borders.FindIndex(b =>
+            b.Left.Style   == left.Style   && b.Left.Color   == left.Color   &&
+            b.Right.Style  == right.Style  && b.Right.Color  == right.Color  &&
+            b.Top.Style    == top.Style    && b.Top.Color    == top.Color    &&
+            b.Bottom.Style == bottom.Style && b.Bottom.Color == bottom.Color);
+        if (idx >= 0) return idx;
+
+        Borders.Add(new XlsxBorder { Left = left, Right = right, Top = top, Bottom = bottom });
+        return Borders.Count - 1;
     }
 
     private int GetOrAddRedBorder()

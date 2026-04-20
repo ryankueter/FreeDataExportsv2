@@ -390,7 +390,9 @@ namespace FreeDataExportsv2
                 string   s  => double.TryParse(s, NumberStyles.Any,
                                    CultureInfo.InvariantCulture, out var sd)
                                ? CellValue.Of(sd)
-                               : CellValue.Of(s),
+                               : dt == DataType.General
+                                   ? CellValue.Of(s)
+                                   : throw new InvalidCastException($"Cannot convert \"{s}\" to a numeric value for data type {dt}."),
                 _ => CellValue.Of(Convert.ToString(value) ?? string.Empty),
             };
         }
@@ -422,7 +424,9 @@ namespace FreeDataExportsv2
             o.FontName is not null || o.FontSize.HasValue || o.FontColor is not null ||
             o.Bold || o.Italic || o.Underline || o.Strikethrough ||
             o.BackgroundColor is not null ||
-            o.HorizontalAlign is not null || o.VerticalAlign is not null || o.WrapText;
+            o.HorizontalAlign is not null || o.VerticalAlign is not null || o.WrapText ||
+            o.BorderLeftStyle is not null || o.BorderRightStyle  is not null ||
+            o.BorderTopStyle  is not null || o.BorderBottomStyle is not null;
 
         // ── XlsxRow management ─────────────────────────────────────────────────────────
 

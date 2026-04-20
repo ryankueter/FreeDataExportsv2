@@ -329,13 +329,16 @@ internal static class OdsContentPart
                     sb.Append($" fo:background-color=\"{ArgbToOds(fill.FgColor)}\"");
                 if (border != null && HasBorder(border))
                 {
-                    // Use red border (error cell indicator)
-                    var side = border.Left;
-                    if (side.Style != null)
+                    if (AllBorderSidesEqual(border))
                     {
-                        string color = side.Color != null ? ArgbToOds(side.Color) : "#000000";
-                        string thick = side.Style == "thin" ? "0.74pt" : "1pt";
-                        sb.Append($" fo:border=\"{thick} solid {color}\"");
+                        sb.Append($" fo:border=\"{OdsBorderValue(border.Left)}\"");
+                    }
+                    else
+                    {
+                        if (border.Left.Style   != null) sb.Append($" fo:border-left=\"{OdsBorderValue(border.Left)}\"");
+                        if (border.Right.Style  != null) sb.Append($" fo:border-right=\"{OdsBorderValue(border.Right)}\"");
+                        if (border.Top.Style    != null) sb.Append($" fo:border-top=\"{OdsBorderValue(border.Top)}\"");
+                        if (border.Bottom.Style != null) sb.Append($" fo:border-bottom=\"{OdsBorderValue(border.Bottom)}\"");
                     }
                 }
                 if (align?.WrapText == true)
@@ -674,7 +677,7 @@ internal static class OdsContentPart
                 break;
 
             case CellValue.Error e:
-                sb.Append($"        <table:table-cell table:style-name=\"{styleName}\" office:value-type=\"string\" calcext:value-type=\"string\">\n");
+                sb.Append($"        <table:table-cell table:style-name=\"{styleName}\" table:formula=\"{e.Code.ToOdsFormula()}\" office:value-type=\"string\" calcext:value-type=\"error\">\n");
                 sb.Append($"          <text:p>{XmlEsc(e.Code.ToXmlString())}</text:p>\n");
                 sb.Append("        </table:table-cell>\n");
                 break;
@@ -1027,6 +1030,32 @@ internal static class OdsContentPart
     private static bool HasBorder(XlsxBorder b) =>
         b.Left.Style != null || b.Right.Style != null ||
         b.Top.Style  != null || b.Bottom.Style != null;
+
+    private static bool AllBorderSidesEqual(XlsxBorder b) =>
+        b.Left.Style  == b.Right.Style  && b.Left.Color  == b.Right.Color  &&
+        b.Left.Style  == b.Top.Style    && b.Left.Color  == b.Top.Color    &&
+        b.Left.Style  == b.Bottom.Style && b.Left.Color  == b.Bottom.Color;
+
+    private static string OdsBorderValue(XlsxBorderSide s)
+    {
+        string thickness = s.Style switch
+        {
+            "medium" or "mediumDashed" or "mediumDashDot" or "mediumDashDotDot" => "1.76pt",
+            "thick"                                                               => "2.65pt",
+            "hair"                                                                => "0.26pt",
+            _                                                                     => "0.74pt",
+        };
+        string lineStyle = s.Style switch
+        {
+            "dashed" or "mediumDashed" or "dashDot" or "mediumDashDot"
+                or "dashDotDot" or "mediumDashDotDot" or "slantDashDot" => "dashed",
+            "dotted" or "hair"                                           => "dotted",
+            "double"                                                     => "double",
+            _                                                            => "solid",
+        };
+        string color = s.Color != null ? ArgbToOds(s.Color) : "#000000";
+        return $"{thickness} {lineStyle} {color}";
+    }
 
     /// <summary>Builds a reverse lookup from NumFmtId → format code string.</summary>
     private static Dictionary<int, string> BuildNumFmtLookup(XlsxStyles styles)

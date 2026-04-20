@@ -44,12 +44,20 @@ and OpenDocument (ODS) files — no Excel or LibreOffice installation required.
 using FreeDataExportsv2;
 
 // XLSX — Microsoft Excel / Open XML
-var workbook = new XlsxFile { Creator = "Jane Smith" };
+var workbook = new XlsxFile
+{
+    Creator = "Summit Ridge Outfitters",
+    LastModifiedBy = "Summit Ridge Outfitters",
+    Created = new DateTime(2026, 3, 31),
+    Modified = DateTime.Now,
+    Company = "Summit Ridge Outfitters, LLC",
+};
 
 // ODS  — LibreOffice Calc / OpenDocument (identical API, different class)
 // var workbook = new OdsFile { Creator = "Jane Smith" };
 
 var sheet = workbook.AddWorksheet("Sales");
+sheet.TabColor = "FF1A3A5C"; // dark navy
 
 // Header row
 sheet.AddRow()
@@ -63,7 +71,26 @@ sheet.AddRow()
     .AddCell(142,        DataType.Number)
     .AddCell(1419.58m,   DataType.Currency);
 
-workbook.Save("Sales.xlsx");  // or "Sales.ods" for OdsFile
+// Cell options
+var navyBg = new CellOptions
+{
+    DataType        = DataType.String,
+    FontSize        = 18,
+    Bold            = true,
+    FontColor       = "FFFFFFFF",
+    BackgroundColor = "FF1A3A5C",
+    BorderBottomColor = "FFFFFFFF",
+    BorderBottomStyle = "medium"
+};
+sheet.AddRow()
+    .AddCell("--", navyBg)
+    .AddCell("--", navyBg)
+    .AddCell("--", navyBg);
+
+sheet.ColumnWidths("22", "18", "28");
+
+workbook.AddErrorsWorksheet();
+workbook.SaveAsync("Sales.xlsx");  // or "Sales.ods" for OdsFile
 ```
 
 ---
@@ -388,7 +415,7 @@ Overrides apply to all worksheets.
 ## Cell Formatting (`CellOptions`)
 
 Pass a `CellOptions` object as the second argument to `AddCell` for fine-grained control
-over font, background colour, and alignment.
+over font, background colour, alignment, and borders.
 
 ```csharp
 // Reusable style
@@ -415,6 +442,68 @@ sheet.AddRow()
     });
 ```
 
+### Borders
+
+Each side of the cell border is controlled independently.  Omit a side to leave it unstyled.
+
+```csharp
+// Box border — all four sides, thin black line
+var boxBorder = new CellOptions
+{
+    DataType         = DataType.String,
+    BorderLeftStyle  = "thin",
+    BorderRightStyle = "thin",
+    BorderTopStyle   = "thin",
+    BorderBottomStyle = "thin",
+    // BorderXxxColor defaults to black ("FF000000") when omitted
+};
+
+// Bottom border only — common totals-row separator
+var totalsSep = new CellOptions
+{
+    DataType          = DataType.Currency,
+    Bold              = true,
+    BorderBottomStyle = "medium",
+    BorderBottomColor = "FF1A3A5C",   // navy underline
+};
+
+// Thick outer box with a custom colour
+var thickBox = new CellOptions
+{
+    DataType          = DataType.String,
+    BorderLeftStyle   = "thick",
+    BorderLeftColor   = "FF007B6E",
+    BorderRightStyle  = "thick",
+    BorderRightColor  = "FF007B6E",
+    BorderTopStyle    = "thick",
+    BorderTopColor    = "FF007B6E",
+    BorderBottomStyle = "thick",
+    BorderBottomColor = "FF007B6E",
+};
+
+sheet.AddRow()
+    .AddCell("Subtotal", totalsSep)
+    .AddCell(1234.56m,   totalsSep);
+```
+
+#### Border style values
+
+| Value | Description |
+|---|---|
+| `"thin"` | Thin solid line (most common) |
+| `"medium"` | Medium solid line |
+| `"thick"` | Thick solid line |
+| `"dashed"` | Thin dashed line |
+| `"mediumDashed"` | Medium dashed line |
+| `"dotted"` | Dotted line |
+| `"hair"` | Hairline (thinnest possible) |
+| `"double"` | Double line |
+| `"dashDot"` | Dash-dot pattern |
+| `"mediumDashDot"` | Medium dash-dot |
+| `"dashDotDot"` | Dash-dot-dot pattern |
+| `"mediumDashDotDot"` | Medium dash-dot-dot |
+| `"slantDashDot"` | Slanted dash-dot |
+
 ### CellOptions properties
 
 | Property | Type | Description |
@@ -431,6 +520,14 @@ sheet.AddRow()
 | `HorizontalAlign` | `string?` | `"left"`, `"center"`, `"right"`, `"fill"`, `"justify"` |
 | `VerticalAlign` | `string?` | `"top"`, `"center"`, `"bottom"`, `"justify"` |
 | `WrapText` | `bool` | Wrap text within the cell |
+| `BorderLeftStyle` | `string?` | Left border line style (see Border style values above) |
+| `BorderLeftColor` | `string?` | Left border ARGB color (default: `"FF000000"`) |
+| `BorderRightStyle` | `string?` | Right border line style |
+| `BorderRightColor` | `string?` | Right border ARGB color |
+| `BorderTopStyle` | `string?` | Top border line style |
+| `BorderTopColor` | `string?` | Top border ARGB color |
+| `BorderBottomStyle` | `string?` | Bottom border line style |
+| `BorderBottomColor` | `string?` | Bottom border ARGB color |
 
 > **ARGB format:** all colour values use the 8-character ARGB hex string `"FFRRGGBB"` where the
 > first two characters are the alpha channel (always `FF` for fully opaque).
@@ -868,6 +965,16 @@ new CellOptions
     HorizontalAlign = "center",      // left | center | right | fill | justify
     VerticalAlign   = "bottom",      // top  | center | bottom | justify
     WrapText        = false,
+
+    // Border — omit any side to leave it unstyled; color defaults to black
+    BorderLeftStyle   = "thin",      // thin | medium | thick | dashed | dotted | double | hair | …
+    BorderLeftColor   = "FF000000",  // ARGB — null = black
+    BorderRightStyle  = "thin",
+    BorderRightColor  = "FF000000",
+    BorderTopStyle    = "thin",
+    BorderTopColor    = "FF000000",
+    BorderBottomStyle = "medium",
+    BorderBottomColor = "FF1A3A5C",  // navy bottom accent
 }
 ```
 

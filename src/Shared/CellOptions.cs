@@ -28,4 +28,22 @@ public sealed class CellOptions
     /// <summary>"top", "center", "bottom", "justify"</summary>
     public string? VerticalAlign   { get; set; }
     public bool    WrapText        { get; set; }
+
+    // XlsxBorder — omit a side to leave it unstyled
+    /// <summary>Border line style: "thin", "medium", "thick", "dashed", "dotted", "double", "hair", "mediumDashed", "dashDot", "mediumDashDot", "dashDotDot", "mediumDashDotDot", "slantDashDot"</summary>
+    public string? BorderLeftStyle   { get; set; }
+    /// <summary>ARGB hex, e.g. "FF000000". Defaults to black when omitted.</summary>
+    public string? BorderLeftColor   { get; set; }
+    /// <inheritdoc cref="BorderLeftStyle"/>
+    public string? BorderRightStyle  { get; set; }
+    /// <inheritdoc cref="BorderLeftColor"/>
+    public string? BorderRightColor  { get; set; }
+    /// <inheritdoc cref="BorderLeftStyle"/>
+    public string? BorderTopStyle    { get; set; }
+    /// <inheritdoc cref="BorderLeftColor"/>
+    public string? BorderTopColor    { get; set; }
+    /// <inheritdoc cref="BorderLeftStyle"/>
+    public string? BorderBottomStyle { get; set; }
+    /// <inheritdoc cref="BorderLeftColor"/>
+    public string? BorderBottomColor { get; set; }
 }
