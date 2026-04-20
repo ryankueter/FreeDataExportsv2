@@ -32,9 +32,8 @@ and OpenDocument (ODS) files — no Excel or LibreOffice installation required.
 16. [Error Handling](#error-handling)
 17. [Saving / Getting Bytes](#saving--getting-bytes)
 18. [DataType Reference](#datatype-reference)
-19. [CellOptions Reference](#celloptions-reference)
-20. [XlsxTableStyles Reference](#xlshtablestyles-reference)
-21. [License](#license)
+19. [XlsxTableStyles Reference](#xlshtablestyles-reference)
+20. [License](#license)
 
 ---
 
@@ -80,7 +79,7 @@ var navyBg = new CellOptions
     FontColor       = "FFFFFFFF",
     BackgroundColor = "FF1A3A5C",
     BorderBottomColor = "FFFFFFFF",
-    BorderBottomStyle = "medium"
+    BorderBottomStyle = BorderStyle.Medium
 };
 sheet.AddRow()
     .AddCell("--", navyBg)
@@ -426,6 +425,10 @@ var headerStyle = new CellOptions
     FontColor       = "FFFFFFFF",   // white text (ARGB)
     Bold            = true,
     BackgroundColor = "FF203864",   // dark navy (ARGB)
+    HorizontalAlign   = HorizontalAlign.Right,
+    VerticalAlign     = VerticalAlign.Bottom,
+    BorderBottomColor = "FFFFFFFF",
+    BorderBottomStyle = BorderStyle.Medium
 };
 
 sheet.AddRow()
@@ -442,6 +445,63 @@ sheet.AddRow()
     });
 ```
 
+### Helper constants
+
+Instead of passing raw strings, use the built-in static classes for full IntelliSense
+coverage of every valid value.
+
+#### HorizontalAlign
+
+```
+HorizontalAlign = HorizontalAlign.Left    // "left"
+HorizontalAlign = HorizontalAlign.Center  // "center"
+HorizontalAlign = HorizontalAlign.Right   // "right"
+HorizontalAlign = HorizontalAlign.Fill    // "fill"
+HorizontalAlign = HorizontalAlign.Justify // "justify"
+HorizontalAlign = HorizontalAlign.General // "general" (application default)
+```
+
+#### VerticalAlign
+
+```
+VerticalAlign = VerticalAlign.Top     // "top"
+VerticalAlign = VerticalAlign.Center  // "center"
+VerticalAlign = VerticalAlign.Bottom  // "bottom"
+VerticalAlign = VerticalAlign.Justify // "justify"
+```
+
+#### BorderStyle
+
+```
+BorderStyle.Thin             // thin solid line (most common)
+BorderStyle.Medium           // medium solid line
+BorderStyle.Thick            // thick solid line
+BorderStyle.Hair             // hairline — thinnest possible
+BorderStyle.Double           // double solid line
+BorderStyle.Dashed           // thin dashed
+BorderStyle.MediumDashed     // medium dashed
+BorderStyle.Dotted           // dotted
+BorderStyle.DashDot          // dash-dot pattern
+BorderStyle.MediumDashDot    // medium dash-dot
+BorderStyle.DashDotDot       // dash-dot-dot
+BorderStyle.MediumDashDotDot // medium dash-dot-dot
+BorderStyle.SlantDashDot     // slanted dash-dot
+```
+
+Example using constants:
+
+```
+var totalsSep = new CellOptions
+{
+    DataType          = DataType.Currency,
+    Bold              = true,
+    HorizontalAlign   = HorizontalAlign.Right,
+    VerticalAlign     = VerticalAlign.Bottom,
+    BorderBottomStyle = BorderStyle.Medium,
+    BorderBottomColor = "FF1A3A5C",
+};
+```
+
 ### Borders
 
 Each side of the cell border is controlled independently.  Omit a side to leave it unstyled.
@@ -450,11 +510,11 @@ Each side of the cell border is controlled independently.  Omit a side to leave 
 // Box border — all four sides, thin black line
 var boxBorder = new CellOptions
 {
-    DataType         = DataType.String,
-    BorderLeftStyle  = "thin",
-    BorderRightStyle = "thin",
-    BorderTopStyle   = "thin",
-    BorderBottomStyle = "thin",
+    DataType          = DataType.String,
+    BorderLeftStyle   = BorderStyle.Thin,
+    BorderRightStyle  = BorderStyle.Thin,
+    BorderTopStyle    = BorderStyle.Thin,
+    BorderBottomStyle = BorderStyle.Thin,
     // BorderXxxColor defaults to black ("FF000000") when omitted
 };
 
@@ -463,7 +523,7 @@ var totalsSep = new CellOptions
 {
     DataType          = DataType.Currency,
     Bold              = true,
-    BorderBottomStyle = "medium",
+    BorderBottomStyle = BorderStyle.Medium,
     BorderBottomColor = "FF1A3A5C",   // navy underline
 };
 
@@ -471,13 +531,13 @@ var totalsSep = new CellOptions
 var thickBox = new CellOptions
 {
     DataType          = DataType.String,
-    BorderLeftStyle   = "thick",
+    BorderLeftStyle   = BorderStyle.Thick,
     BorderLeftColor   = "FF007B6E",
-    BorderRightStyle  = "thick",
+    BorderRightStyle  = BorderStyle.Thick,
     BorderRightColor  = "FF007B6E",
-    BorderTopStyle    = "thick",
+    BorderTopStyle    = BorderStyle.Thick,
     BorderTopColor    = "FF007B6E",
-    BorderBottomStyle = "thick",
+    BorderBottomStyle = BorderStyle.Thick,
     BorderBottomColor = "FF007B6E",
 };
 
@@ -488,21 +548,21 @@ sheet.AddRow()
 
 #### Border style values
 
-| Value | Description |
-|---|---|
-| "thin" | Thin solid line (most common) |
-| "medium" | Medium solid line |
-| "thick" | Thick solid line |
-| "dashed" | Thin dashed line |
-| "mediumDashed" | Medium dashed line |
-| "dotted" | Dotted line |
-| "hair" | Hairline (thinnest possible) |
-| "double" | Double line |
-| "dashDot" | Dash-dot pattern |
-| "mediumDashDot" | Medium dash-dot |
-| "dashDotDot" | Dash-dot-dot pattern |
-| "mediumDashDotDot" | Medium dash-dot-dot |
-| "slantDashDot" | Slanted dash-dot |
+| Constant | Raw value | Description |
+|---|---|---|
+| BorderStyle.Thin | "thin" | Thin solid line (most common) |
+| BorderStyle.Medium | "medium" | Medium solid line |
+| BorderStyle.Thick | "thick" | Thick solid line |
+| BorderStyle.Hair | "hair" | Hairline (thinnest possible) |
+| BorderStyle.Double | "double" | Double line |
+| BorderStyle.Dashed | "dashed" | Thin dashed line |
+| BorderStyle.MediumDashed | "mediumDashed" | Medium dashed line |
+| BorderStyle.Dotted | "dotted" | Dotted line |
+| BorderStyle.DashDot | "dashDot" | Dash-dot pattern |
+| BorderStyle.MediumDashDot | "mediumDashDot" | Medium dash-dot |
+| BorderStyle.DashDotDot | "dashDotDot" | Dash-dot-dot pattern |
+| BorderStyle.MediumDashDotDot | "mediumDashDotDot" | Medium dash-dot-dot |
+| BorderStyle.SlantDashDot | "slantDashDot" | Slanted dash-dot |
 
 ### CellOptions properties
 
@@ -517,10 +577,10 @@ sheet.AddRow()
 | Underline | bool | Single underline |
 | Strikethrough | bool | Strikethrough |
 | BackgroundColor | string? | ARGB hex cell background, e.g. "FFFFFF00" (yellow) |
-| HorizontalAlign | string? | "left", "center", "right", "fill", "justify" |
-| VerticalAlign | string? | "top", "center", "bottom", "justify" |
+| HorizontalAlign | string? | Use HorizontalAlign constants: Left, Center, Right, Fill, Justify, General |
+| VerticalAlign | string? | Use VerticalAlign constants: Top, Center, Bottom, Justify |
 | WrapText | bool | Wrap text within the cell |
-| BorderLeftStyle | string? | Left border line style (see Border style values above) |
+| BorderLeftStyle | string? | Left border line style — use BorderStyle constants (see Border style values above) |
 | BorderLeftColor | string? | Left border ARGB color (default: "FF000000") |
 | BorderRightStyle | string? | Right border line style |
 | BorderRightColor | string? | Right border ARGB color |
@@ -531,6 +591,43 @@ sheet.AddRow()
 
 > **ARGB format:** all colour values use the 8-character ARGB hex string "FFRRGGBB" where the
 > first two characters are the alpha channel (always FF for fully opaque).
+
+### Quick reference
+
+```
+new CellOptions
+{
+    // Format
+    DataType        = DataType.Currency,
+
+    // Font
+    FontName        = "Arial",          // null = Calibri (workbook default)
+    FontSize        = 12.0,             // null = 11pt (workbook default)
+    FontColor       = "FFFF0000",       // ARGB — null = default theme colour
+    Bold            = true,
+    Italic          = false,
+    Underline       = false,
+    Strikethrough   = false,
+
+    // Fill
+    BackgroundColor = "FFFFFF00",       // ARGB — null = no background
+
+    // Alignment
+    HorizontalAlign = HorizontalAlign.Center,   // Left | Center | Right | Fill | Justify | General
+    VerticalAlign   = VerticalAlign.Bottom,      // Top  | Center | Bottom | Justify
+    WrapText        = false,
+
+    // Border — omit any side to leave it unstyled; color defaults to black
+    BorderLeftStyle   = BorderStyle.Thin,        // Thin | Medium | Thick | Dashed | Dotted | Double | Hair | …
+    BorderLeftColor   = "FF000000",              // ARGB — null = black
+    BorderRightStyle  = BorderStyle.Thin,
+    BorderRightColor  = "FF000000",
+    BorderTopStyle    = BorderStyle.Thin,
+    BorderTopColor    = "FF000000",
+    BorderBottomStyle = BorderStyle.Medium,
+    BorderBottomColor = "FF1A3A5C",             // navy bottom accent
+}
+```
 
 ---
 
@@ -937,45 +1034,6 @@ Percentage     WholePercent   Fraction       Scientific     Thousands
 Thousands2     ShortDate      LongDate       DateTime       DateTime24
 Time12h        Time24h        Boolean        Formula        Error
 PhoneUS        Text           Zip
-```
-
----
-
-## CellOptions Reference
-
-```
-new CellOptions
-{
-    // Format
-    DataType        = DataType.Currency,
-
-    // Font
-    FontName        = "Arial",       // null = Calibri (workbook default)
-    FontSize        = 12.0,          // null = 11pt (workbook default)
-    FontColor       = "FFFF0000",    // ARGB — null = default theme colour
-    Bold            = true,
-    Italic          = false,
-    Underline       = false,
-    Strikethrough   = false,
-
-    // Fill
-    BackgroundColor = "FFFFFF00",    // ARGB — null = no background
-
-    // Alignment
-    HorizontalAlign = "center",      // left | center | right | fill | justify
-    VerticalAlign   = "bottom",      // top  | center | bottom | justify
-    WrapText        = false,
-
-    // Border — omit any side to leave it unstyled; color defaults to black
-    BorderLeftStyle   = "thin",      // thin | medium | thick | dashed | dotted | double | hair | …
-    BorderLeftColor   = "FF000000",  // ARGB — null = black
-    BorderRightStyle  = "thin",
-    BorderRightColor  = "FF000000",
-    BorderTopStyle    = "thin",
-    BorderTopColor    = "FF000000",
-    BorderBottomStyle = "medium",
-    BorderBottomColor = "FF1A3A5C",  // navy bottom accent
-}
 ```
 
 ---

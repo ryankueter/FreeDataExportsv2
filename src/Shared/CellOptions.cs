@@ -23,14 +23,14 @@ public sealed class CellOptions
     public string? BackgroundColor { get; set; }
 
     // XlsxAlignment
-    /// <summary>"left", "center", "right", "fill", "justify", "general"</summary>
+    /// <summary>Use <see cref="FreeDataExportsv2.HorizontalAlign"/> constants: Left, Center, Right, Fill, Justify, General.</summary>
     public string? HorizontalAlign { get; set; }
-    /// <summary>"top", "center", "bottom", "justify"</summary>
+    /// <summary>Use <see cref="FreeDataExportsv2.VerticalAlign"/> constants: Top, Center, Bottom, Justify.</summary>
     public string? VerticalAlign   { get; set; }
     public bool    WrapText        { get; set; }
 
     // XlsxBorder — omit a side to leave it unstyled
-    /// <summary>Border line style: "thin", "medium", "thick", "dashed", "dotted", "double", "hair", "mediumDashed", "dashDot", "mediumDashDot", "dashDotDot", "mediumDashDotDot", "slantDashDot"</summary>
+    /// <summary>Use <see cref="BorderStyle"/> constants: Thin, Medium, Thick, Dashed, Dotted, Double, Hair, MediumDashed, DashDot, MediumDashDot, DashDotDot, MediumDashDotDot, SlantDashDot.</summary>
     public string? BorderLeftStyle   { get; set; }
     /// <summary>ARGB hex, e.g. "FF000000". Defaults to black when omitted.</summary>
     public string? BorderLeftColor   { get; set; }
