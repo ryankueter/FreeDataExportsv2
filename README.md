@@ -40,7 +40,7 @@ and OpenDocument (ODS) files — no Excel or LibreOffice installation required.
 
 ## Quick Start
 
-```csharp
+```
 using FreeDataExportsv2;
 
 // XLSX — Microsoft Excel / Open XML
@@ -101,7 +101,7 @@ workbook.SaveAsync("Sales.xlsx");  // or "Sales.ods" for OdsFile
 and error-handling options are configured on it before calling `Save`.
 See [LibreOffice Export (`OdsFile`)](#libreoffice-export-odsfile) for the equivalent OpenDocument class.
 
-```csharp
+```
 var workbook = new XlsxFile
 {
     Creator        = "Ryan Kueter",
@@ -137,7 +137,7 @@ var workbook = new XlsxFile
 Calc and other OpenDocument-compatible applications.  Its public API is **identical** to
 `XlsxFile`, so switching between the two requires only changing the class name.
 
-```csharp
+```
 using FreeDataExportsv2;
 
 var workbook = new OdsFile
@@ -204,7 +204,7 @@ The `OdsFile` methods mirror `XlsxFile` exactly:
 
 ## Worksheets
 
-```csharp
+```
 var orders    = workbook.AddWorksheet("Orders");
 var inventory = workbook.AddWorksheet("Inventory");
 
@@ -225,7 +225,7 @@ The first worksheet added is automatically tab-selected (active on open).
 `AddRow()` advances to the next row and returns an `XlsxRowBuilder` for fluent chaining.  
 `AddCell(value, dataType)` accepts **any** .NET value and converts it automatically.
 
-```csharp
+```
 // Column headers
 sheet.AddRow()
     .AddCell("OrderId",   DataType.String)
@@ -244,7 +244,7 @@ foreach (var o in orders)
 
 `AddCell` has two overloads:
 
-```csharp
+```
 // Simple: value + DataType
 .AddCell(value, DataType.Currency)
 
@@ -264,7 +264,7 @@ foreach (var o in orders)
 Write to any cell by A1-style reference or 1-based row/column indices, without calling `AddRow`.
 Useful for sparse writes, templates, or when you need to target a specific location.
 
-```csharp
+```
 // By cell reference
 sheet.SetCell("A1", "Label",      DataType.String);
 sheet.SetCell("B1", 3.14,         DataType.Number);
@@ -295,7 +295,7 @@ Set a default background color, font family, font size, and font color for an en
 with a single `SheetStyle` object.  Every cell that doesn't carry its own `CellOptions` inherits
 the sheet default — including completely empty cells, so the background fills the visible grid.
 
-```csharp
+```
 var sheet = workbook.AddWorksheet("Report");
 
 // Object-initializer style
@@ -344,7 +344,7 @@ A header row with its own `BackgroundColor` will display its own color, not the 
 
 ### `XlsxWorksheet.ApplySheetStyle`
 
-```csharp
+```
 workbook.AddWorksheet("Styled")
     .ApplySheetStyle(new SheetStyle { BackgroundColor = "FFF2F2F2", FontSize = 11 });
 ```
@@ -402,7 +402,7 @@ The `DataType` enum controls both the Excel cell type and the display format.
 
 Change the default format code for any `DataType` before writing data:
 
-```csharp
+```
 workbook.Format(DataType.DateTime24, @"m/d/yy\ h:mm");
 workbook.Format(DataType.Currency,   "£#,##0.00");
 workbook.Format(DataType.PhoneUS,    "000-000-0000");
@@ -417,7 +417,7 @@ Overrides apply to all worksheets.
 Pass a `CellOptions` object as the second argument to `AddCell` for fine-grained control
 over font, background colour, alignment, and borders.
 
-```csharp
+```
 // Reusable style
 var headerStyle = new CellOptions
 {
@@ -446,7 +446,7 @@ sheet.AddRow()
 
 Each side of the cell border is controlled independently.  Omit a side to leave it unstyled.
 
-```csharp
+```
 // Box border — all four sides, thin black line
 var boxBorder = new CellOptions
 {
@@ -538,7 +538,7 @@ sheet.AddRow()
 
 Set column widths after adding all rows. Returns `this` for chaining.
 
-```csharp
+```
 orders.ColumnWidths("10", "14", "7", "12", "28", "14", "10");
 inventory.ColumnWidths("10", "16", "10", "14");
 ```
@@ -567,7 +567,7 @@ to `"14"` will render at approximately the same visual width in both Excel and L
 Attach a styled, filterable Excel table to any range using `AddTable`.  
 The table definition is fluent — chain calls to configure it.
 
-```csharp
+```
 // 1. Write your data rows first (header + data + optional blank totals row)
 sheet.AddRow()
     .AddCell("Item ID",    DataType.String)
@@ -616,7 +616,7 @@ cells in the last row for every column that has a non-`None` `XlsxTotalsRowFunct
 
 ### Properties (also settable directly)
 
-```csharp
+```
 var def = new XlsxTableDefinition("MyTable")
 {
     StyleName      = XlsxTableStyles.Dark2,
@@ -637,7 +637,7 @@ def.Columns.Add(new XlsxTableColumn("Revenue", XlsxTotalsRowFunction.Sum));
 Embed one or more charts on any worksheet with `AddChart`.  Charts reference data via
 A1-style sheet references — the data can live on the same sheet or any other sheet.
 
-```csharp
+```
 // Column chart anchored to columns A–G, rows 8–23
 sheet.AddChart(
     new ChartDefinition("Sales by Item")
@@ -685,7 +685,7 @@ sheet.AddChart(
 Controls the chart's or image's position on the sheet using zero-based row/column indices
 (column 0 = A, row 0 = row 1):
 
-```csharp
+```
 new ObjectAnchor
 {
     FromCol = 0,  // top-left column (0 = A)
@@ -702,7 +702,7 @@ Multiple charts can be added to the same worksheet by calling `AddChart` more th
 
 Use the fluent `.Series()` method to append series to a chart:
 
-```csharp
+```
 new ChartDefinition("Revenue by Product")
     .Type(ChartType.Column)
     .Legend("b")
@@ -718,7 +718,7 @@ new ChartDefinition("Revenue by Product")
 `OdsFile` supports charts using the **same API** as `XlsxFile` — the same `ChartDefinition`,
 `ChartType`, and `ObjectAnchor` types are used without modification.
 
-```csharp
+```
 // Works identically for both XlsxFile and OdsFile
 sheet.AddChart(
     new ChartDefinition("Sales by Region")
@@ -750,7 +750,7 @@ Images are anchored using the same `ObjectAnchor` struct as charts.
 
 ### From a file path
 
-```csharp
+```
 // The content type is inferred from the file extension
 sheet.AddImage(
     filePath: @"C:\assets\logo.png",
@@ -759,7 +759,7 @@ sheet.AddImage(
 
 ### From a byte array
 
-```csharp
+```
 byte[] imageBytes = File.ReadAllBytes("banner.jpg");
 
 sheet.AddImage(
@@ -797,7 +797,7 @@ Multiple images can be added to the same worksheet, and images and charts may co
 `CsvFile` provides a simple, flat API for producing RFC 4180–compliant CSV files.
 Rows are added directly on the `CsvFile` instance — no worksheet abstraction is needed.
 
-```csharp
+```
 using FreeDataExportsv2;
 
 var csv = new CsvFile
@@ -827,7 +827,7 @@ await csv.SaveAsync("orders.csv");
 
 `AddRow` returns `this` so calls can be chained:
 
-```csharp
+```
 csv.AddRow("A", "B", "C")
    .AddRow(1, 2, 3)
    .AddRow(4, 5, 6);
@@ -880,7 +880,7 @@ Every `AddCell` call is wrapped in a `try/catch`. When a conversion fails:
 
 ### Display options
 
-```csharp
+```
 // Option A — Auto-create a red "Errors" worksheet on Save (only if errors exist)
 workbook.AddErrorsWorksheet();
 
@@ -897,7 +897,7 @@ if (!string.IsNullOrEmpty(report))
 
 ### Triggering an error deliberately
 
-```csharp
+```
 // Passing a non-date string where a date is expected logs the error gracefully
 sheet.AddRow().AddCell("not-a-date", DataType.ShortDate);
 ```
@@ -906,7 +906,7 @@ sheet.AddRow().AddCell("not-a-date", DataType.ShortDate);
 
 ## Saving / Getting Bytes
 
-```csharp
+```
 // Synchronous — file
 workbook.Save("output.xlsx");
 
@@ -943,7 +943,7 @@ PhoneUS        Text           Zip
 
 ## CellOptions Reference
 
-```csharp
+```
 new CellOptions
 {
     // Format
@@ -985,13 +985,13 @@ new CellOptions
 Use the `XlsxTableStyles` static class for type-safe style names, or pass any valid Excel
 table style string directly.
 
-```csharp
+```
 XlsxTableStyles.Light1  … Light21
 XlsxTableStyles.Medium1 … Medium28
 XlsxTableStyles.Dark1   … Dark11
 ```
 
-```csharp
+```
 // Using a constant
 .Style(XlsxTableStyles.Medium7)
 
