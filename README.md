@@ -1,6 +1,6 @@
 ﻿# FreeDataExportsv2
 
-**Author:** Ryan Kueter &nbsp;|&nbsp; **Updated:** April 2026
+**Author:** Ryan Kueter &nbsp;|&nbsp; **Updated:** May 2026
 
 A lightweight, zero-dependency .NET library for generating .xlsx, .ods, and .csv files.
 It includes charts, images, tables, and custom formatting options, and produces valid Open XML (OOXML)
