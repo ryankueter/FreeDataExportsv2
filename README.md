@@ -10,6 +10,13 @@ and OpenDocument (ODS) files — no Excel or LibreOffice installation required.
 |-------------------|
 | .NET 8 - .NET 10 |
 
+## 🚀 Looking for the CLI Tool?
+We also provide a command-line interface for this library. You can install it via:
+```bash
+dotnet tool install --global FreeDataExportsCMD
+```
+Visit the [FreeDataExportsCMD](https://www.nuget.org/packages/FreeDataExportsCMD) for tool documentation.
+
 ---
 
 ## Table of Contents
