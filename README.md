@@ -6,11 +6,10 @@ A lightweight, zero-dependency .NET library for generating .xlsx, .ods, and .csv
 It includes charts, images, tables, and custom formatting options, and produces valid Open XML (OOXML)
 and OpenDocument (ODS) files — no Excel or LibreOffice installation required.
 
-| Target Frameworks 
-|-------------------
-| .NET 8 - .NET 10 
+## Target Frameworks 
+.NET 8 - .NET 10 
 
-## 🚀 Looking for the CLI Tool?
+## Looking for the CLI Tool?
 This library also has a .NET Tool. You can install it via:
 ```bash
 dotnet tool install --global FreeDataExportsCMD
